@@ -1,0 +1,4 @@
+#Wed Apr 08 18:35:12 CST 2020
+base.0=D\:\\FileExplorer-master\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\2
+path.0=classes.dex
+renamed.0=classes.dex
