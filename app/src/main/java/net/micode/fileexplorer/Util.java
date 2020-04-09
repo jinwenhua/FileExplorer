@@ -388,7 +388,7 @@ public class Util {
         builder.setContentTitle(title);
         builder.setContentText(body);
         builder.setWhen(java.lang.System.currentTimeMillis()); //设置显示的时间，默认就是currentTimeMillis()
-        builder.setDeleteIntent(contentIntent);
+        builder.setContentIntent(contentIntent);
         Notification notification = builder.build();
         notification.flags = Notification.FLAG_AUTO_CANCEL;
         notification.defaults = Notification.DEFAULT_SOUND;

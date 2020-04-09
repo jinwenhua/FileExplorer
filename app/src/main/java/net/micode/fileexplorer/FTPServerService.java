@@ -28,6 +28,8 @@ import java.util.Date;
 import java.util.List;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -220,7 +222,11 @@ public class FTPServerService extends Service implements Runnable {
 
     private boolean loadSettings() {
         myLog.l(Log.DEBUG, "Loading settings");
-        settings = getSharedPreferences(Defaults.getSettingsName(), Defaults.getSettingsMode());
+        try {
+            settings = getSharedPreferences(Defaults.getSettingsName(), Defaults.getSettingsMode());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
         port = settings.getInt("portNum", Defaults.portNumber);
         if (port == 0) {
             // If port number from settings is invalid, use the default
@@ -264,16 +270,30 @@ public class FTPServerService extends Service implements Runnable {
         notificationIntent.putExtra(GlobalConsts.INTENT_EXTRA_TAB, 2);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
-        Notification.Builder builder = new Notification.Builder(getApplicationContext());
+        String CHANNEL_ID = "com.example.recyclerviewtest.N1";
+        String CHANNEL_NAME = "TEST";
+        Notification.Builder builder = new Notification.Builder(getApplicationContext(), CHANNEL_ID);
+        NotificationChannel mChannel  = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            mChannel  = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(mChannel);
+        }
+
         builder.setSmallIcon(icon);
+        builder.setWhen(when);
         builder.setContentTitle(contentTitle);
         builder.setContentText(contentText);
-        builder.setDeleteIntent(contentIntent);
+        builder.setContentIntent(contentIntent);
         Notification notification = builder.build();
 
         notification.flags |= Notification.FLAG_ONGOING_EVENT;
 
-        startForeground(123453, notification);
+        try {
+            startForeground(123453, notification);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
 
         myLog.d("Notication setup done");
     }
